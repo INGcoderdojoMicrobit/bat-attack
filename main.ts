@@ -40,6 +40,7 @@ sprites.onCreated(SpriteKind.Enemy, function (sprite) {
             . . . f f f f f f f . . . . . . 
             `)
     }
+    list.push(sprite)
 })
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (pociski > 0) {
@@ -54,6 +55,13 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         pociski += -1
     } else {
         scene.cameraShake(6, 200)
+    }
+})
+sprites.onDestroyed(SpriteKind.Enemy, function (sprite) {
+    for (let value of list) {
+        if (value == sprite) {
+            list.removeAt(list.indexOf(sprite))
+        }
     }
 })
 sprites.onOverlap(SpriteKind.Projectile, SpriteKind.Enemy, function (sprite, otherSprite) {
@@ -73,6 +81,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
 })
 let enemySprite: Sprite = null
 let projectile: Sprite = null
+let list: Sprite[] = []
 let pociski = 0
 let interval = 0
 let mySprite: Sprite = null
@@ -223,6 +232,8 @@ scene.setBackgroundImage(img`
     7777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777
     `)
 pociski = 15
+list = []
+let phase = 0
 game.onUpdateInterval(interval, function () {
     enemySprite = sprites.create(img`
         . . f f f . . . . . . . . f f f 
@@ -243,4 +254,147 @@ game.onUpdateInterval(interval, function () {
         . . . f f f f f f f . . . . . . 
         `, SpriteKind.Enemy)
     enemySprite.setPosition(randint(140, 160), randint(0, 120))
+})
+game.onUpdateInterval(100, function () {
+    for (let value of list) {
+        if (phase % 4 == 0) {
+            value.setImage(img`
+                . . . . . . . . . . . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                . . . c c . c c . . . . . . . . 
+                . . f 3 c c 3 c c c . . . . . . 
+                . f c 3 b c 3 b c c c . . . . . 
+                f c b b b b b b b b f f . . . . 
+                c c 1 b b b 1 b b b f f . . . . 
+                c b b b b b b b b c f f f . . . 
+                c b 1 f f 1 c b b f f f f . . . 
+                f f 1 f f 1 f b c c b b b . . . 
+                f f f f f f f b f c c c c . . . 
+                f f 2 2 2 2 f b f b b c c c . . 
+                . f 2 2 2 2 2 b c c b b c . . . 
+                . . f 2 2 2 b f f c c b b c . . 
+                . . . f f f f f f f c c c c c . 
+                . . . . . . . . . . . . c c c c 
+                `)
+        } else if (phase % 4 == 1) {
+            value.setImage(img`
+                . f f f . . . . . . . . f f f . 
+                f f c . . . . . . . f c b b c . 
+                f c c . . . . . . f c b b c . . 
+                c f . . . . . . . f b c c c . . 
+                c f f . . . . . f f b b c c . . 
+                f f f c c . c c f b c b b c . . 
+                f f f c c c c c f b c c b c . . 
+                . f c 3 c c 3 b c b c c c . . . 
+                . c b 3 b c 3 b b c c c c . . . 
+                c c b b b b b b b b c c . . . . 
+                c 1 1 b b b 1 1 b b b f c . . . 
+                f b b b b b b b b b b f c c . . 
+                f b c b b b c b b b b f . . . . 
+                . f 1 f f f 1 b b b c f . . . . 
+                . . f b b b b b b c f . . . . . 
+                . . . f f f f f f f . . . . . . 
+                `)
+        } else if (phase % 4 == 2) {
+            value.setImage(img`
+                . . f f f . . . . . . . . f f f 
+                . f f c c . . . . . . f c b b c 
+                f f c c . . . . . . f c b b c . 
+                f c f c . . . . . . f b c c c . 
+                f f f c c . c c . f c b b c c . 
+                f f c 3 c c 3 c c f b c b b c . 
+                f f b 3 b c 3 b c f b c c b c . 
+                . c 1 b b b 1 b c b b c c c . . 
+                . c 1 b b b 1 b b c c c c . . . 
+                c b b b b b b b b b c c . . . . 
+                c b 1 f f 1 c b b b b f . . . . 
+                f f 1 f f 1 f b b b b f c . . . 
+                f f 2 2 2 2 f b b b b f c c . . 
+                . f 2 2 2 2 b b b b c f . . . . 
+                . . f b b b b b b c f . . . . . 
+                . . . f f f f f f f . . . . . . 
+                `)
+        } else {
+            value.setImage(img`
+                . . f f f . . . . . . . . . . . 
+                f f f c c . . . . . . . . f f f 
+                f f c c c . c c . . . f c b b c 
+                f f c 3 c c 3 c c f f b b b c . 
+                f f c 3 b c 3 b c f b b c c c . 
+                f c b b b b b b c f b c b c c . 
+                c c 1 b b b 1 b c b b c b b c . 
+                c b b b b b b b b b c c c b c . 
+                c b 1 f f 1 c b b c c c c c . . 
+                c f 1 f f 1 f b b b b f c . . . 
+                f f f f f f f b b b b f c . . . 
+                f f 2 2 2 2 f b b b b f c c . . 
+                . f 2 2 2 2 2 b b b c f . . . . 
+                . . f 2 2 2 b b b c f . . . . . 
+                . . . f f f f f f f . . . . . . 
+                . . . . . . . . . . . . . . . . 
+                `)
+        }
+    }
+    if (phase % 3 == 0) {
+        mySprite.setImage(img`
+            ......ffff............
+            ....fff22fff..........
+            ...fff2222fff.........
+            ..fffeeeeeefff........
+            ..ffe222222eef........
+            ..fe2ffffff2ef........
+            ..ffffeeeeffff......cc
+            .ffefbf44fbfeff....c5c
+            .ffefbf44fbfeff...c55c
+            .fee4dddddd4eef.cc55c.
+            fdfeeddddd4eeffec55c..
+            fbffee4444ee4fddccc...
+            fbf4f222222f1edde.....
+            fcf.f222222f44ee......
+            .ff.f445544f..........
+            ....ffffffff..........
+            .....ff..ff...........
+            `)
+    } else if (phase % 3 == 1) {
+        mySprite.setImage(img`
+            ......................
+            ......ffff............
+            ....fff22fff..........
+            ...fff2222fff.........
+            ..fffeeeeeefff........
+            ..ffe222222eef........
+            ..fe2ffffff2ef........
+            ..ffffeeeeffff........
+            .ffefbf44fbfeff.......
+            .fee41fddf14eef.......
+            fdfeeddddd4eff........
+            fbffee444edd4e........
+            fbf4f2222edde.........
+            fcf.f22cccee..........
+            .ff.f44c5c4f..........
+            ....fff55cff..........
+            .....f55cff...........
+            `)
+    } else if (phase % 3 == 2) {
+        mySprite.setImage(img`
+            ......................
+            ......................
+            .......ff.............
+            .....ff22ff...........
+            ...fff2222fff.........
+            ..fff222222fff........
+            ..fff222222fff........
+            ..feeeeeeeeeeff.......
+            .ffe22222222eff.......
+            .fffffeeeefffff.......
+            fdfefbf44fbfeff.......
+            fbfe41fddf14ef........
+            fbffe4dddd4efe........
+            fcfef22222f4e.........
+            .ff4f44554f4e.........
+            ....ffffffdde.........
+            .....ffffedde.........
+            `)
+    }
+    phase += 1
 })
