@@ -2,7 +2,12 @@
     "name": "Bat Attack",
     "description": "",
     "dependencies": {
-        "device": "*"
+        "device": "*",
+        "storyboard": "*",
+        "animation": "*",
+        "pxt-status-bar": "github:jwunderl/pxt-status-bar#v0.4.0",
+        "arcade-text": "github:microsoft/arcade-text#v1.3.0",
+        "corgio": "*"
     },
     "files": [
         "main.blocks",
